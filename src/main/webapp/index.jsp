@@ -21,7 +21,7 @@
                             a.setAttribute('href', data.url);
                             a.setAttribute('target', 'blank');
 //                            a.setAttribute('id', id);
-                            // 防止反复添加
+                            // 此处可以做到防止反复添加
 //                            if(!document.getElementById(id)) {
                                 document.body.appendChild(a);
 //                            }
