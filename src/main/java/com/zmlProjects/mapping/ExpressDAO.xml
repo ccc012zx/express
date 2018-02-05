@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zmlProjects.express.DAO.ExpressDAO">
+  <resultMap id="BaseResultMap" type="com.zmlProjects.express.bean.ExpressBean">
+    <result column="number" jdbcType="VARCHAR" property="number" />
+    <result column="firstday" jdbcType="DATE" property="firstday"/>
+    <result column="company" jdbcType="VARCHAR" property="company" />
+    <result column="user" jdbcType="VARCHAR" property="user" />
+    <result column="timeday" jdbcType="INTEGER" property="timeday" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    number, firstday, company, user, timeday
+  </sql>
+
+  <insert id="insert" parameterType="com.zmlProjects.express.bean.ExpressBean">
+    insert into express(number, firstday, company, user, timeday)
+    values (#{number,jdbcType=VARCHAR}, #{firstday,jdbcType=DATE}, #{company,jdbcType=VARCHAR}, #{user,jdbcType=VARCHAR},
+      #{timeday,jdbcType=INTEGER})
+  </insert>
+
+  <select id="selectByNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from express
+    where number = #{number ,jdbcType=INTEGER}
+  </select>
+  <select id="queryAllExpress" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from express
+  </select>
+  <delete id="deleteExpress" parameterType="com.zmlProjects.express.bean.ExpressBean">
+    delete from express where number = #{number ,jdbcType=INTEGER}
+  </delete>
+</mapper>

@@ -1,5 +1,6 @@
 package com.zmlProjects.express.Quartz;
 
+import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
 
@@ -47,6 +48,44 @@ public class QuartzExpress {
                 job.getJobDataMap().put(number, com);
                 // Trigger the job to run on the next round minute
                 Trigger trigger = newTrigger().withIdentity("trigger" + number, "group" + number).startAt(runTime).build();
+
+                // Tell quartz to schedule the job using our trigger
+                ;
+                getScheduler().scheduleJob(job, trigger);
+            }
+
+            // Start up the scheduler (nothing can actually run until the
+            // scheduler has been started)
+            getScheduler().start();
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
+
+        // wait long enough so that the scheduler as an opportunity to
+        // run the job!
+        try {
+            Thread.sleep(600);
+            // executing...
+        } catch (Exception e) {
+            //
+        }
+    }
+
+    /**
+     * 此處暫時不會使用該job，通過Spring整合quartz
+     * @param com
+     */
+    public static void createFixedExpressQuartz(String com) {
+        // First we must get a reference to a scheduler
+        try {
+            // define the job and tie it to our HelloJob class
+
+            if (!getScheduler().checkExists(new JobKey("job001", "group001"))) {
+                JobDetail job = newJob(QuartzJobFixedExpress.class).withIdentity("job001", "group001").build();
+//                job.getJobDataMap().put(number, com);
+                // Trigger the job to run on the next round minute
+//                Trigger trigger = newTrigger().withIdentity("trigger001", "group001").withSchedule(cronSchedule("0 0 23 * * ?")).build();
+                Trigger trigger = newTrigger().withIdentity("trigger001", "group001").withSchedule(cronSchedule("0 0/1 * * * ?")).build();
 
                 // Tell quartz to schedule the job using our trigger
                 ;

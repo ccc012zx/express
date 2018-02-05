@@ -15,7 +15,49 @@
     <bean
             class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <!-- 这里的配置我的理解是自动给后面action的方法return的字符串加上前缀和后缀，变成一个 可用的url地址 -->
-        <property name="prefix" value="/" />
-        <property name="suffix" value=".jsp" />
+        <property name="prefix" value="/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+
+    <!--后续尝试用java方式实现-->
+    <!--quartz,-->
+    <!-- 第二种方式定义job，高级方式，更加灵活，可以通过xml方式为QuartzService2注入属性（包括其他类的对象）等操作。如果仅仅是注入其他service类的对象，基本上第一种方式配合注解也能实现 -->
+    <!-- 通过JobDetailFactoryBean创建Job，也是FactoryBean<JobDetail>的实现类. -->
+    <bean name="complexJobDetail"
+          class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="jobClass" value="com.zmlProjects.express.Quartz.QuartzJobFixedExpressService" /> <!--好像必须得写类路径，不能用ref。注意xml注入一定要写set方法 -->
+        <!--<property name="jobDataMap">-->
+            <!--<map>-->
+                <!--<entry key="sgtPeppers" value-ref="sgtPeppers" />&lt;!&ndash; 设置QuartzService2中的属性sgtPeppers，该属性是一个类对象&ndash;&gt;-->
+                <!--<entry key="timeout" value="5" />&lt;!&ndash; 设置QuartzService2中的属性timeout，该属性是一个int类型 &ndash;&gt;-->
+            <!--</map>-->
+        <!--</property>-->
+        <property name="durability" value="true" />
+    </bean>
+
+    <!-- 第二种方式定义计划触发器 -->
+    <!-- Run the job every 5 seconds -->
+    <bean id="cronTrigger"
+          class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="complexJobDetail" />
+        <!--<property name="cronExpression" value="0/5 * * ? * SAT-SUN" /> -->
+        <property name="cronExpression" value="0/5 * * ? * *" />
+
+    </bean>
+
+    <!-- 定义调度类 -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="jobDetails">
+            <list>
+                <ref bean="complexJobDetail" />
+            </list>
+        </property>
+
+        <property name="triggers">
+            <list>
+                <ref bean="cronTrigger" />
+            </list>
+        </property>
     </bean>
 </beans>
