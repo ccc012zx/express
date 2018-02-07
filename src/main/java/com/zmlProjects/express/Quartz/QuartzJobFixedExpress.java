@@ -6,18 +6,14 @@ import com.zmlProjects.express.service.ExpressService;
 import com.zmlProjects.express.service.Kuaidi100Service;
 import org.apache.commons.lang3.time.DateUtils;
 import org.quartz.Job;
-import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 每晚23点固定执行
@@ -29,7 +25,6 @@ import java.util.Set;
  * 3.1、已经到货的，转移该条数据到history表中
  */
 public class QuartzJobFixedExpress implements Job {
-
 
 
     @Autowired
@@ -59,17 +54,17 @@ public class QuartzJobFixedExpress implements Job {
 
             if (DateUtils.addDays(expressBean.getFirstday(), expressBean.getTimeday()).getTime() <= new Date().getTime()) {
                 String expressNumber = expressBean.getNumber();
-                KuaidiBean kuaidiBean = kuaidi100Service.queryOneExpress("tiantian",expressNumber);//此处拆分到另外一个service中去
+                KuaidiBean kuaidiBean = kuaidi100Service.queryOneExpress("tiantian", expressNumber);//此处拆分到另外一个service中去
                 if ("3".equals(kuaidiBean.getState())) {
                     //转移到hisory表中
                     //此处未完成：expressHisService.add(expressBean);
                     //express表中删除数据
                     expressService.deleteExpress(expressBean);
                 } else {
-                    if (DateUtils.addDays(expressBean.getFirstday() , expressBean.getTimeday()).getDay() == new Date().getDay()) {
+                    if (DateUtils.addDays(expressBean.getFirstday(), expressBean.getTimeday()).getDay() == new Date().getDay()) {
                         //"等于"的时候才调用短信提醒功能，"大于"不管，默认寄件人要重点处理
-                        System.out.println("print打印："+expressNumber+"还没收货，请及时关注");
-                        logger.info("log4J打印："+expressNumber+"还没收货，请及时关注");
+                        System.out.println("print打印：" + expressNumber + "还没收货，请及时关注");
+                        logger.info("log4J打印：" + expressNumber + "还没收货，请及时关注");
                     }
                 }
             }
