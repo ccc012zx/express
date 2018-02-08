@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 
+
 @Service("quartzJobFixedExpressService")
+
 public class QuartzJobFixedExpressService {
     @Autowired
     private ExpressService expressService;
@@ -23,12 +25,12 @@ public class QuartzJobFixedExpressService {
 
     private static final Logger logger = LoggerFactory.getLogger(QuartzJobFixedExpressService.class);
 
-    public void scanExpress() {
+    public void scanExpress(String abc) {
        logger.info("log4J打印：進入express job");
         //1、查询express表，返回所有数据的list
         List<ExpressBean> list = expressService.queryAllExpress();
         //2、遍历list，firstday+timeday<=today,查询快递状态：状态为"未到货"则调用短信提醒功能；状态为"已经签收"则调用Express数据转移功能（转移数据到history表中）
-        for (int i = 0; i < list.size(); i++) {
+        // for (int i = 0; i < list.size(); i++) {
             ExpressBean expressBean = list.get(i);
 
             if (DateUtils.addDays(expressBean.getFirstday(), expressBean.getTimeday()-1).getTime() <= new Date().getTime()) {
